@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCT WISH 공구 주문 확인</title>
+<style>
+  :root{
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --panel-2: #f5f6f2;
+    --line: #e4e6de;
+    --text: #1c1e18;
+    --muted: #767b6d;
+    --accent: #8fb800;
+    --accent-soft: rgba(143,184,0,0.13);
+    --warn: #b8790b;
+    --warn-soft: rgba(255,184,77,0.16);
+    --ok: #4a9a6f;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+  }
+  .wrap{ max-width: 480px; margin: 0 auto; }
+  .eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  h1{
+    font-size: 22px;
+    margin: 0 0 24px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .sub{
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 0 0 28px;
+  }
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  label{
+    display:block;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input{
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color .15s ease;
+  }
+  input:focus{ border-color: var(--accent); }
+  button{
+    width: 100%;
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .1s ease, opacity .15s ease;
+  }
+  button:active{ transform: scale(0.98); }
+  .err{
+    color: var(--warn);
+    font-size: 13px;
+    margin-top: -6px;
+    margin-bottom: 14px;
+    display:none;
+  }
+  .result{ display:none; }
+  .result-header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 18px;
+  }
+  .result-header .name{
+    font-size: 19px;
+    font-weight: 800;
+  }
+  .result-header .id{
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .section-label{
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin: 20px 0 10px;
+  }
+  .section-label:first-of-type{ margin-top: 0; }
+  .item-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14.5px;
+  }
+  .item-row:last-child{ border-bottom:none; }
+  .item-qty{
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 12.5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+  .total-row{
+    display:flex;
+    justify-content:space-between;
+    font-weight: 800;
+    font-size: 15px;
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+  .info-grid{ font-size: 14.5px; }
+  .info-line{
+    display:flex;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 12px;
+  }
+  .info-line:last-child{ border-bottom:none; }
+  .info-line .k{
+    color: var(--muted);
+    min-width: 84px;
+    flex-shrink:0;
+    font-size: 13px;
+    padding-top: 1px;
+  }
+  .info-line .v{
+    font-weight: 600;
+    line-height:1.45;
+    word-break: keep-all;
+  }
+  .pref{
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--panel-2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+  .warn-box{
+    background: var(--warn-soft);
+    border: 1px solid rgba(184,121,11,0.3);
+    border-radius: 10px;
+    padding: 13px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #8a5a08;
+    margin-top: 14px;
+    display:flex;
+    gap: 9px;
+  }
+  .warn-box .mark{ flex-shrink:0; }
+  .contact-box{
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .contact-box b{ color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">NCT WISH JAPAN 2ND SINGLE 공구</div>
+  <h1>내 주문 확인하기</h1>
+
+  <div class="card" id="formCard">
+    <label for="nameInput">주문자명</label>
+    <input id="nameInput" type="text" placeholder="예) 김대영" autocomplete="off">
+    <label for="phoneInput">연락처 뒷자리 4자리</label>
+    <input id="phoneInput" type="text" placeholder="예) 0621" maxlength="4" inputmode="numeric" autocomplete="off">
+    <div class="err" id="errMsg">이름 또는 뒷자리 4자리가 일치하지 않아요. 다시 확인해주세요.</div>
+    <button onclick="checkOrder()">확인하기</button>
+  </div>
+
+  <div class="card result" id="resultCard"></div>
+</div>
+
+<script>
+const orders = [
+  { id:1, name:"김지원", phoneLast4:"3558", phoneFull:"010-3293-3558", zip:"", address:"GS25의왕신명점", method:"GS 반값택배(편의점 픽업)", items:{요이돈:1, 재희:1, 리쿠:1}, total:3, pref:"1. 리쿠 2. 재희 3. 유우시 4. 시온 5. 사쿠야 6. 료", warn:null },
+  { id:2, name:"김래은", phoneLast4:"4811", phoneFull:"010-8687-4811", zip:"42755", address:"대구 달서구 조암남로16길 19 월성 코오롱 하늘채 102동 1603호", method:"일반택배", items:{시온:1, 리쿠:1, 유우시:1, 사쿠야:1, 료:1}, total:5, pref:null, warn:null },
+  { id:3, name:"이다연", phoneLast4:"1270", phoneFull:"010-4811-1270", zip:"", address:"CU 개금블루스카이점", method:"CU 반값택배(편의점 픽업)", items:{유우시:1}, total:1, pref:null, warn:null },
+  { id:4, name:"박수영", phoneLast4:"8048", phoneFull:"010-3349-8048", zip:"", address:"경기 용인시 기흥구 용구대로 1842 (보라동, 보라마을 현대 모닝사이드) 103동 1304호", method:"CU 반값택배(편의점 픽업)", items:{유우시:1}, total:1, pref:"1. 유우시 2. 사쿠야 3. 리쿠 4. 시온 5. 재희 6. 료", warn:"CU 반값택배는 편의점 픽업 방식이라 실제 수령할 CU 지점명이 필요해요. 현재는 일반 주소로 입력되어 있어서 이대로는 배송이 안 될 수 있어요 — 1:1 오픈채팅(주문자명 박수영)으로 픽업 받으실 CU 지점명을 다시 남겨주세요." },
+  { id:5, name:"박가령", phoneLast4:"2016", phoneFull:"010-8966-2016", zip:"36759", address:"경북 안동시 풍천면 검무로 35-18, 경북도청신도시 코오롱하늘채상가 110호, 111호 (갈전리 1177)", method:"일반택배", items:{요이돈:1, 보밋걸:1, 사쿠야:1}, total:3, pref:"1. 사쿠야 2. 리쿠", warn:null },
+  { id:6, name:"오윤아", phoneLast4:"7292", phoneFull:"010-8201-7292", zip:"", address:"GS25인계파밀리에점", method:"GS 반값택배(편의점 픽업)", items:{시온:1}, total:1, pref:null, warn:null },
+  { id:7, name:"김서영", phoneLast4:"7349", phoneFull:"010-2730-7349", zip:"", address:"CU녹번이편한세상캐슬점", method:"CU 반값택배(편의점 픽업)", items:{리쿠:1}, total:1, pref:"1. 리쿠 2. 유우시", warn:null },
+  { id:8, name:"양지혜", phoneLast4:"4502", phoneFull:"010-7726-4502", zip:"11455", address:"경기 양주시 고암길 223 704동 302호", method:"일반택배", items:{요이돈:1, 보밋걸:1, 리쿠:1, 유우시:1}, total:4, pref:"1. 유우시 (제발요) 2. 리쿠", warn:null },
+  { id:9, name:"김나경", phoneLast4:"9302", phoneFull:"010-8236-9302", zip:"", address:"CU마산삼계포스점", method:"CU 반값택배(편의점 픽업)", items:{보밋걸:1, 사쿠야:1}, total:2, pref:"1. 사쿠야 2. 리쿠 3. 시온 4. 유우시 5. 료 6. 재희", warn:null },
+  { id:10, name:"김나윤", phoneLast4:"9972", phoneFull:"010-8598-9972", zip:"", address:"GS상동진달래점", method:"CU 반값택배", items:{요이돈:1, 보밋걸:1}, total:2, pref:"1. 리쿠 2. 유우시 3. 사쿠야 4. 시온 5. 료 6. 재희", warn:"배송방법은 CU 반값택배인데 주소는 GS 지점명으로 되어 있어요. 어느 쪽이 맞는지 1:1 오픈채팅(주문자명 김나윤)으로 확인해주세요." },
+  { id:11, name:"박희진", phoneLast4:"2627", phoneFull:"010-4155-2627", zip:"", address:"GS인천산곡점", method:"GS 반값택배(편의점 픽업)", items:{재희:1}, total:1, pref:"1. 재희 2. 사쿠야 3~6은 상관없음", warn:null },
+  { id:12, name:"이지민", phoneLast4:"9823", phoneFull:"010-3700-9823", zip:"", address:"GS25 행신햇빛점", method:"GS 반값택배(편의점 픽업)", items:{시온:1, 사쿠야:1}, total:2, pref:"1. 유우시 2. 사쿠야 3. 시온 4. 리쿠 5. 료 6. 재희", warn:null }
+];
+
+function checkOrder(){
+  const name = document.getElementById('nameInput').value.trim();
+  const last4 = document.getElementById('phoneInput').value.trim();
+  const err = document.getElementById('errMsg');
+  const match = orders.find(o => o.name === name && o.phoneLast4 === last4);
+
+  if(!match){
+    err.style.display = 'block';
+    document.getElementById('resultCard').style.display = 'none';
+    return;
+  }
+  err.style.display = 'none';
+  renderResult(match);
+}
+
+function renderResult(o){
+  const itemRows = Object.entries(o.items).map(([k,v]) =>
+    `<div class="item-row"><span>${k}</span><span class="item-qty">${v}개</span></div>`
+  ).join('');
+
+  const addressLabel = o.zip ? '배송지' : '픽업 지점';
+
+  let html = `
+    <div class="result-header">
+      <span class="name">${o.name} 님</span>
+      <span class="id">주문번호 #${o.id}</span>
+    </div>
+
+    <div class="section-label">주문 내역</div>
+    <div>${itemRows}</div>
+    <div class="total-row"><span>합계</span><span>${o.total}개</span></div>
+
+    <div class="section-label">배송 정보</div>
+    <div class="info-grid">
+      <div class="info-line"><span class="k">연락처</span><span class="v">${o.phoneFull}</span></div>
+      <div class="info-line"><span class="k">배송방법</span><span class="v">${o.method}</span></div>
+      ${o.zip ? `<div class="info-line"><span class="k">우편번호</span><span class="v">${o.zip}</span></div>` : ''}
+      <div class="info-line"><span class="k">${addressLabel}</span><span class="v">${o.address}</span></div>
+    </div>
+  `;
+
+  if(o.pref){
+    html += `
+      <div class="section-label">선호 순위</div>
+      <div class="pref">${o.pref}</div>
+    `;
+  }
+
+  if(o.warn){
+    html += `
+      <div class="warn-box"><span class="mark">⚠️</span><span>${o.warn}</span></div>
+    `;
+  }
+
+  html += `
+    <div class="contact-box">
+      정보가 다르거나 문의사항이 있으면 <b>1:1 오픈채팅에 주문자명(${o.name})</b>으로 들어와서 말씀해주세요.
+    </div>
+  `;
+
+  document.getElementById('resultCard').innerHTML = html;
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('formCard').style.display = 'none';
+}
+
+document.getElementById('phoneInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ checkOrder(); }
+});
+document.getElementById('nameInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ document.getElementById('phoneInput').focus(); }
+});
+</script>
+</body>
+</html>
